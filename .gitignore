@@ -1,0 +1,19 @@
+# Archivos del sistema
+.DS_Store
+bhexpress/TestResults/
+bhexpress/.vs/
+bhexpress/bin/
+bhexpress/obj/
+bhexpress/packages/
+bhexpress/Program.cs
+bhexpress/nuget.exe
+bhexpress/*.nupkg
+bhexpress/*.nuspec
+
+# Archivos de tests
+tests/TestEnv.cs
+tests/readme.txt
+tests/bin/
+tests/obj/
+tests/Connected Services/
+tests/nuget.exe
