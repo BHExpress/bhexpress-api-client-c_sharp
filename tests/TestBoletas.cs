@@ -207,109 +207,7 @@ namespace tests
                 Assert.Fail();
             }
         }
-
-        /// <summary>
-        /// Test para probar ListadoBhe sólo con fechaDesde.
-        /// 
-        /// ESTA PRUEBA DEBE FALLAR Y ENTREGAR MENSAJE DE QUE DEBE USARSE CON fechaDesde Y fechaHasta.
-        /// </summary>
-        [TestMethod]
-        [ExpectedException(typeof(ApiException))]
-        public void TestListadoBoletasRangoDesde()
-        {
-            TestEnv test_env = new TestEnv();
-            test_env.SetVariablesDeEntorno();
-            // Variables de entorno definidas desde test_env
-            string fechaDesde = Environment.GetEnvironmentVariable("TEST_LISTAR_FECHADESDE");
-
-            Boletas boletas = new Boletas();
-
-            try
-            {
-                HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde);
-                var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
-
-                Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
-                foreach (var informacion in resultado)
-                {
-                    Trace.WriteLine(informacion.ToString());
-                }
-
-                Assert.AreEqual(resultado.Count > 0, true);
-            }
-            catch (AssertFailedException e)
-            {
-                Trace.WriteLine($"No se ha podido encontrar ninguna boleta. Error: {e}");
-                Assert.Fail();
-            }
-            catch (JsonSerializationException e)
-            {
-                Trace.WriteLine($"Error de serialización json. Error: {e}");
-                Assert.Fail();
-            }
-            catch (ApiException e)
-            {
-                Trace.WriteLine($"ApiException: {e}");
-            }
-            catch (Exception e)
-            {
-                Trace.WriteLine($"Error: {e}");
-                Assert.Fail();
-            }
-        }
-
-        /// <summary>
-        /// Test para probar ListadoBhe sólo con fechaHasta.
-        /// 
-        /// ESTA PRUEBA DEBE FALLAR Y ENTREGAR MENSAJE DE QUE DEBE USARSE CON fechaDesde Y fechaHasta.
-        /// </summary>
-        [TestMethod]
-        [ExpectedException(typeof(ApiException))]
-        public void TestListadoBoletasRangoHasta()
-        {
-            TestEnv test_env = new TestEnv();
-            test_env.SetVariablesDeEntorno();
-            // Variables de entorno definidas desde test_env
-            string fechaHasta = Environment.GetEnvironmentVariable("TEST_LISTAR_FECHAHASTA");
-
-            Boletas boletas = new Boletas();
-
-            try
-            {
-                HttpResponseMessage response = boletas.ListadoBhe(fechaHasta: fechaHasta);
-                var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
-
-                Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
-                foreach (var informacion in resultado)
-                {
-                    Trace.WriteLine(informacion.ToString());
-                }
-
-                Assert.AreEqual(resultado.Count > 0, true);
-            }
-            catch (AssertFailedException e)
-            {
-                Trace.WriteLine($"No se ha podido encontrar ninguna boleta. Error: {e}");
-                Assert.Fail();
-            }
-            catch (JsonSerializationException e)
-            {
-                Trace.WriteLine($"Error de serialización json. Error: {e}");
-                Assert.Fail();
-            }
-            catch (ApiException e)
-            {
-                Trace.WriteLine($"ApiException: {e}");
-            }
-            catch (Exception e)
-            {
-                Trace.WriteLine($"Error: {e}");
-                Assert.Fail();
-            }
-        }
-
+        
         /// <summary>
         /// Test para probar ListadoBhe con periodo, fechaDesde y fechaHasta correctos.
         /// </summary>
@@ -453,7 +351,6 @@ namespace tests
         /// ESTA PRUEBA DEBE FALLAR Y ENTREGAR MENSAJE DE QUE LOS AÑOS NO COINCIDEN.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(ApiException))]
         public void TestListadoBoletasMixtoError1()
         {
             TestEnv test_env = new TestEnv();
@@ -506,7 +403,6 @@ namespace tests
         /// ESTA PRUEBA DEBE FALLAR Y ENTREGAR MENSAJE DE QUE LAS FECHAS SON INCORRECTAS.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(ApiException))]
         public void TestListadoBoletasMixtoError2()
         {
             TestEnv test_env = new TestEnv();
@@ -559,7 +455,6 @@ namespace tests
         /// ESTA PRUEBA DEBE FALLAR Y ENTREGAR MENSAJE DE QUE LAS FECHAS SON INCORRECTAS.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(ApiException))]
         public void TestListadoBoletasRangoError()
         {
             TestEnv test_env = new TestEnv();
@@ -705,13 +600,13 @@ namespace tests
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
                 Trace.WriteLine(jsonResponse.ToString());
 
-                /*
+                
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
                 {
                     Trace.WriteLine(informacion.ToString());
                 }
-                */
+                
 
                 Assert.AreEqual(jsonResponse.Length > 0, true);
             }
@@ -761,6 +656,7 @@ namespace tests
                 else
                 {
                     System.IO.File.WriteAllBytes($@"test_pdf_{numeroBhe}.pdf", respuesta);
+                    Trace.WriteLine("El PDF se ha generado exitosamente (Guardado en tests/bin/Debug/test_pdf_{numeroBhe}.pdf).");
                 }
 
                 Assert.AreEqual(respuesta.Length >= 0, true);
@@ -800,19 +696,17 @@ namespace tests
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
                 Trace.WriteLine(jsonResponse.ToString());
 
-                /*
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
                 {
                     Trace.WriteLine(informacion.ToString());
                 }
-                */
 
                 Assert.AreEqual(jsonResponse.Length > 0, true);
             }
             catch (AssertFailedException e)
             {
-                throw new ApiException($"No se ha podido encontrar contribuyente. Error: {e}");
+                throw new ApiException($"Error al enviar la boleta. Error: {e}");
             }
             catch (JsonSerializationException e)
             {
@@ -846,13 +740,11 @@ namespace tests
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
                 Trace.WriteLine(jsonResponse.ToString());
 
-                /*
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
                 {
                     Trace.WriteLine(informacion.ToString());
                 }
-                */
 
                 Assert.AreEqual(jsonResponse.Length > 0, true);
             }

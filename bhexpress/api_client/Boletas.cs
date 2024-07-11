@@ -50,7 +50,7 @@ namespace bhexpress.api_client
         /// <param name="periodo">Período por el cuál consultar las boletas. Puede ser: "AAAAMM" o "AAAA"</param>
         /// <param name="fechaDesde">Fecha desde cuándo consultar las boletas. Formato: "AAAA-MM-DD"</param>
         /// <param name="fechaHasta">Fecha hasta cuándo consultar las boletas. Formato: "AAAA-MM-DD"</param>
-        /// <param name="receptorCodigo">Código del receptor</param>
+        /// <param name="receptorCodigo">Código del receptor. Generalmente es el RUT del receptor sin DV.</param>
         /// <returns>HttpResponseMessage Retorna la respuesta con el listado de boletas y un filtro opcional </returns>
         /// <exception cref="ApiException">Arroja un error cuando las fechas de periodo, fechaDesde y fechaHasta no coinciden.</exception>
         public HttpResponseMessage ListadoBhe(string periodo = null, string fechaDesde = null, string fechaHasta = null, string receptorCodigo = null)
@@ -58,39 +58,12 @@ namespace bhexpress.api_client
             string url = "/bhe/boletas";
             string rut = Environment.GetEnvironmentVariable("BHEXPRESS_EMISOR_RUT");
             List<string> parameters = new List<string>();
-            if (!string.IsNullOrEmpty(periodo))
-            {
-                parameters.Add($"periodo={periodo}");
-            }
-            if (!string.IsNullOrEmpty(fechaDesde))
-            {
-                parameters.Add($"fecha_desde={fechaDesde}");
-            }
-            if (!string.IsNullOrEmpty(fechaHasta))
-            {
-                parameters.Add($"fecha_hasta={fechaHasta}");
-            }
-            if (!string.IsNullOrEmpty(receptorCodigo))
-            {
-                parameters.Add($"receptor_codigo={receptorCodigo}");
-            }
-
-            if (parameters.Count > 0)
-            {
-                url += "?" + string.Join("&", parameters);
-            }
-            Dictionary<string, string> header = new Dictionary<string, string>(){
-                { "X-Bhexpress-Emisor", rut }
-            };
 
             // Revisión de variables
+            // Periodo dividido en año y mes (si es que viene con mes) convertido en enteros
             int perAnio = (!string.IsNullOrEmpty(periodo)) ? Convert.ToInt32(periodo.Substring(0, 4)) : 0;
-            int perMes = 0;
-            if(!string.IsNullOrEmpty(periodo) && periodo.Length > 4)
-            {
-                perMes = Convert.ToInt32(periodo.Substring(4, 2));
-            }
-
+            int perMes = (!string.IsNullOrEmpty(periodo) && periodo.Length > 4) ? Convert.ToInt32(periodo.Substring(4, 2)) : 0;
+            // Fechas divididas y convertidas en enteros
             int fechaDesdeAnio = (!string.IsNullOrEmpty(fechaDesde)) ? Convert.ToInt32(fechaDesde.Split('-')[0]) : 0;
             int fechaDesdeMes = (!string.IsNullOrEmpty(fechaDesde)) ? Convert.ToInt32(fechaDesde.Split('-')[1]) : 0;
             int fechaDesdeDia = (!string.IsNullOrEmpty(fechaDesde)) ? Convert.ToInt32(fechaDesde.Split('-')[2]) : 0;
@@ -101,45 +74,48 @@ namespace bhexpress.api_client
             Trace.WriteLine(fechaHastaAnio + "-" + fechaHastaMes + "-" + fechaHastaDia);
             Trace.WriteLine(perAnio + "-" + perMes);
 
-            if (string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta))
+            if ((string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta)) || 
+                (!string.IsNullOrEmpty(fechaDesde) && string.IsNullOrEmpty(fechaHasta)))
             {
-                throw new ApiException("Debe ingresar fechaDesde además de FechaHasta.");
+                throw new ApiException("Debe ingresar fechaDesde junto con fechaHasta.");
             }
-            else if(!string.IsNullOrEmpty(fechaDesde) && string.IsNullOrEmpty(fechaHasta))
+            if ((fechaDesdeAnio > fechaHastaAnio && fechaDesdeAnio != 0 && fechaHastaAnio != 0) ||
+                ((fechaDesdeAnio <= fechaHastaAnio && fechaDesdeMes > fechaHastaMes) && fechaDesdeMes != 0 && fechaHastaMes != 0) ||
+                ((fechaDesdeAnio <= fechaHastaAnio && fechaDesdeMes <= fechaHastaMes && fechaDesdeDia > fechaHastaDia) && fechaDesdeDia != 0 && fechaHastaDia != 0))
             {
-                throw new ApiException("Debe ingresar fechaHasta además de FechaDesde.");
+                throw new ApiException("La fecha de fechaDesde no puede ser mayor que la de fechaHasta.");
             }
-
-            if (fechaDesdeAnio > fechaHastaAnio && fechaDesdeAnio != 0 && fechaHastaAnio != 0)
+            if ((fechaDesdeAnio != perAnio && fechaDesdeAnio != 0 && perAnio != 0) || (fechaDesdeMes != perMes && fechaDesdeMes != 0 && perMes != 0))
             {
-                throw new ApiException("El año de fechaDesde no puede ser mayor que el de fechaHasta.");
+                throw new ApiException("Se generó un conflicto entre fechaDesde y periodo: Las fechas no coinciden.");
             }
-            else if ((fechaDesdeAnio <= fechaHastaAnio && fechaDesdeMes > fechaHastaMes) && fechaDesdeMes != 0 && fechaHastaMes != 0)
+            if ((fechaHastaAnio != perAnio && fechaHastaAnio != 0 && perAnio != 0) || (fechaHastaMes != perMes && fechaHastaMes != 0 && perMes != 0))
             {
-                throw new ApiException("El mes de fechaDesde no puede ser mayor que el de fechaHasta.");
+                throw new ApiException("Se generó un conflicto entre fechaHasta y periodo: Las fechas no coinciden.");
             }
-            else if ((fechaDesdeAnio <= fechaHastaAnio && fechaDesdeMes <= fechaHastaMes && fechaDesdeDia > fechaHastaDia) && fechaDesdeDia != 0 && fechaHastaDia != 0)
+            
+            // Construcción de URL
+            if (!string.IsNullOrEmpty(periodo))
             {
-                throw new ApiException("El día de fechaDesde no puede ser mayor que el de fechaHasta.");
+                parameters.Add($"periodo={periodo}");
             }
-
-            if (fechaDesdeAnio != perAnio && fechaDesdeAnio != 0 && perAnio != 0)
+            if (!string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta))
             {
-                throw new ApiException("Se generó un conflicto entre fechaDesde y periodo: Los años no coinciden.");
+                parameters.Add($"fecha_desde={fechaDesde}&fecha_hasta={fechaHasta}");
             }
-            else if (fechaDesdeMes != perMes && fechaDesdeMes != 0 && perMes != 0)
+            if (!string.IsNullOrEmpty(receptorCodigo))
             {
-                throw new ApiException("Se generó un conflicto entre fechaDesde y periodo: Los meses no coinciden.");
+                parameters.Add($"receptor_codigo={receptorCodigo}");
             }
-
-            if (fechaHastaAnio != perAnio && fechaHastaAnio != 0 && perAnio != 0)
+            // Concatenar al URL la lista creada
+            if (parameters.Count > 0)
             {
-                throw new ApiException("Se generó un conflicto entre fechaDesde y periodo: Los años no coinciden.");
+                url += "?" + string.Join("&", parameters);
             }
-            else if (fechaHastaMes != perMes && fechaHastaMes != 0 && perMes != 0)
-            {
-                throw new ApiException("Se generó un conflicto entre fechaDesde y periodo: Los meses no coinciden.");
-            }
+            // Crear cabecera para el request
+            Dictionary<string, string> header = new Dictionary<string, string>(){
+                { "X-Bhexpress-Emisor", rut }
+            };
 
             return this.client.Get(url, headers: header);
         }
