@@ -35,20 +35,20 @@ namespace tests
         public void SetVariablesDeEntorno()
         {
             // VARIABLES DE ENTORNO BASE
-            string BHEXPRESS_API_URL = "https://bhexpress.cl"; // URL base
-            string BHEXPRESS_API_VERSION = "v1"; // Versión
-            string BHEXPRESS_API_TOKEN = ""; // Token de API
+            string BHEXPRESS_API_URL = "https://bhexpress.cl"; // URL base.
+            string BHEXPRESS_API_VERSION = "v1"; // Versión de la API.
+            string BHEXPRESS_API_TOKEN = ""; // Token de API, obtenido desde tu cuenta de BHExpress.
             // VARIABLES DE ENTORNO DE HEADER
-            string BHEXPRESS_EMISOR_RUT = ""; // RUT del emisor para el header
+            string BHEXPRESS_EMISOR_RUT = ""; // RUT del emisor para el header, con DV.
             // VARIABLES DE ENTORNO DE PRUEBA
             // LISTAR BOLETAS
             string TEST_LISTAR_ANIO = ""; // Año de periodo, formato "AAAA"
             string TEST_LISTAR_PERIODO = ""; // Año y mes de periodo, formato "AAAAMM"
             string TEST_LISTAR_FECHADESDE = ""; // Fecha desde cuándo listar boletas, formato "AAAA-MM-DD".
-            string TEST_LISTAR_FECHAHASTA = ""; // Fecha hasta cuándo listar boletas, formato "AAAA-MM-DD"
+            string TEST_LISTAR_FECHAHASTA = ""; // Fecha hasta cuándo listar boletas, formato "AAAA-MM-DD".
             string TEST_LISTAR_CODIGORECEPTOR = ""; // Código de receptor. Generalmente su RUT sin DV.
             // EMITIR BOLETAS
-            string TEST_EMITIR_FECHA_EMIS = ""; // Fecha de emisión de la boleta a emitir.
+            string TEST_EMITIR_FECHA_EMIS = ""; // Fecha de emisión de la boleta a emitir, formato "AAAA-MM-DD".
             string TEST_EMITIR_EMISOR = ""; // RUT del emisor, con DV.
             string TEST_EMITIR_RECEPTOR = ""; // RUT del receptor, con DV.
             string TEST_EMITIR_RZNSOC_REC = ""; // Razón social del receptor.
