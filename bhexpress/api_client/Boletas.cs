@@ -60,25 +60,18 @@ namespace bhexpress.api_client
             List<string> parameters = new List<string>();
 
             // Revisión de variables
-            // Periodo dividido en año y mes (si es que viene con mes) convertido en enteros
-            int perAnio = (!string.IsNullOrEmpty(periodo)) ? Convert.ToInt32(periodo.Substring(0, 4)) : 0;
-            int perMes = (!string.IsNullOrEmpty(periodo) && periodo.Length > 4) ? Convert.ToInt32(periodo.Substring(4, 2)) : 0;
-            // Fechas divididas y convertidas en enteros
-            Trace.WriteLine(perAnio + "-" + perMes);
+            Trace.WriteLine(periodo ?? "0000-00");
             Trace.WriteLine(Convert.ToDateTime(fechaDesde).ToString());
             Trace.WriteLine(Convert.ToDateTime(fechaHasta).ToString());
 
-            if ((string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta)) || 
-                (!string.IsNullOrEmpty(fechaDesde) && string.IsNullOrEmpty(fechaHasta)))
+            if (string.IsNullOrEmpty(fechaDesde) || string.IsNullOrEmpty(fechaHasta))
             {
                 throw new ApiException("Debe ingresar fechaDesde junto con fechaHasta.");
             }
-            if (!string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta))
+            if ((!string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta)) && 
+                (Convert.ToDateTime(fechaDesde) > Convert.ToDateTime(fechaHasta)))
             {
-                if (Convert.ToDateTime(fechaDesde) > Convert.ToDateTime(fechaHasta))
-                {
-                    throw new ApiException("La fecha de fechaDesde no puede ser mayor que la de fechaHasta.");
-                }
+                throw new ApiException("La fecha de fechaDesde no puede ser mayor que la de fechaHasta.");
             }
             
             // Construcción de URL
