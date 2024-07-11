@@ -64,7 +64,7 @@ namespace bhexpress.api_client
             Trace.WriteLine(Convert.ToDateTime(fechaDesde).ToString());
             Trace.WriteLine(Convert.ToDateTime(fechaHasta).ToString());
 
-            if (string.IsNullOrEmpty(fechaDesde) || string.IsNullOrEmpty(fechaHasta))
+            if (!string.IsNullOrEmpty(fechaDesde) ^ !string.IsNullOrEmpty(fechaHasta))
             {
                 throw new ApiException("Debe ingresar fechaDesde junto con fechaHasta.");
             }
