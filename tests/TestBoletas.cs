@@ -210,13 +210,15 @@ namespace tests
         
         /// <summary>
         /// Test para probar ListadoBhe con periodo, fechaDesde y fechaHasta correctos.
+        /// 
+        /// Retornará las boletas con el filtro de periodo, ya que tiene prioridad sobre fechaDesde y fechaHasta.
         /// </summary>
         [TestMethod]
         public void TestListadoBoletasPeriodoRango()
         {
             TestEnv test_env = new TestEnv();
             test_env.SetVariablesDeEntorno();
-            // Variables definidas para probar errores
+            // Variables de entorno definidas
             string periodo = Environment.GetEnvironmentVariable("TEST_LISTAR_PERIODO");
             string fechaDesde = Environment.GetEnvironmentVariable("TEST_LISTAR_FECHADESDE");
             string fechaHasta = Environment.GetEnvironmentVariable("TEST_LISTAR_FECHAHASTA");
@@ -302,12 +304,56 @@ namespace tests
         /// Test para probar ListadoBhe sólo con periodo, fechaDesde, fechaHasta y receptorCodigo.
         /// </summary>
         [TestMethod]
-        public void TestListadoBoletasCompleto()
+        public void TestListadoBoletasPeriodoReceptor()
         {
             TestEnv test_env = new TestEnv();
             test_env.SetVariablesDeEntorno();
-            // Variables definidas para probar errores
+            // Variables de entorno definidas
             string periodo = Environment.GetEnvironmentVariable("TEST_LISTAR_PERIODO");
+            string receptorCodigo = Environment.GetEnvironmentVariable("TEST_LISTAR_CODIGORECEPTOR");
+
+            Boletas boletas = new Boletas();
+
+            try
+            {
+                HttpResponseMessage response = boletas.ListadoBhe(periodo: periodo, receptorCodigo: receptorCodigo);
+                var jsonResponse = response.Content.ReadAsStringAsync().Result;
+                Trace.WriteLine(jsonResponse.ToString());
+
+                Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
+                foreach (var informacion in resultado)
+                {
+                    Trace.WriteLine(informacion.ToString());
+                }
+
+                Assert.AreEqual(resultado.Count > 0, true);
+            }
+            catch (AssertFailedException e)
+            {
+                Trace.WriteLine($"No se ha podido encontrar ninguna boleta. Error: {e}");
+                Assert.Fail();
+            }
+            catch (JsonSerializationException e)
+            {
+                Trace.WriteLine($"Error de serialización json. Error: {e}");
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine($"Error: {e}");
+                Assert.Fail();
+            }
+        }
+
+        /// <summary>
+        /// Test para probar ListadoBhe sólo con fechaDesde, fechaHasta y receptorCodigo.
+        /// </summary>
+        [TestMethod]
+        public void TestListadoBoletasRangoReceptor()
+        {
+            TestEnv test_env = new TestEnv();
+            test_env.SetVariablesDeEntorno();
+            // Variables de entorno definidas
             string fechaDesde = Environment.GetEnvironmentVariable("TEST_LISTAR_FECHADESDE");
             string fechaHasta = Environment.GetEnvironmentVariable("TEST_LISTAR_FECHAHASTA");
             string receptorCodigo = Environment.GetEnvironmentVariable("TEST_LISTAR_CODIGORECEPTOR");
@@ -316,7 +362,7 @@ namespace tests
 
             try
             {
-                HttpResponseMessage response = boletas.ListadoBhe(periodo: periodo, fechaDesde: fechaDesde, fechaHasta: fechaHasta, receptorCodigo: receptorCodigo);
+                HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde, fechaHasta: fechaHasta, receptorCodigo: receptorCodigo);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
                 Trace.WriteLine(jsonResponse.ToString());
 
@@ -351,20 +397,19 @@ namespace tests
         /// ESTA PRUEBA DEBE FALLAR Y ENTREGAR MENSAJE DE QUE LOS AÑOS NO COINCIDEN.
         /// </summary>
         [TestMethod]
-        public void TestListadoBoletasMixtoError1()
+        public void TestListadoBoletasRangoErrorAnio()
         {
             TestEnv test_env = new TestEnv();
             test_env.SetVariablesDeEntorno();
             // Variables definidas para probar errores
-            string periodo = "202301";
             string fechaDesde = "2024-06-01";
-            string fechaHasta = "2024-06-02";
+            string fechaHasta = "2023-06-02";
 
             Boletas boletas = new Boletas();
 
             try
             {
-                HttpResponseMessage response = boletas.ListadoBhe(periodo: periodo, fechaDesde: fechaDesde, fechaHasta: fechaHasta);
+                HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde, fechaHasta: fechaHasta);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
                 Trace.WriteLine(jsonResponse.ToString());
 
@@ -403,12 +448,11 @@ namespace tests
         /// ESTA PRUEBA DEBE FALLAR Y ENTREGAR MENSAJE DE QUE LAS FECHAS SON INCORRECTAS.
         /// </summary>
         [TestMethod]
-        public void TestListadoBoletasMixtoError2()
+        public void TestListadoBoletasRangoErrorDia()
         {
             TestEnv test_env = new TestEnv();
             test_env.SetVariablesDeEntorno();
-            // Variables definidas para probar errores
-            string periodo = "202406";
+            // Variables definidas para probar errores+
             string fechaDesde = "2024-06-03";
             string fechaHasta = "2024-06-02";
 
@@ -416,7 +460,7 @@ namespace tests
 
             try
             {
-                HttpResponseMessage response = boletas.ListadoBhe(periodo: periodo, fechaDesde: fechaDesde, fechaHasta: fechaHasta);
+                HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde, fechaHasta: fechaHasta);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
                 Trace.WriteLine(jsonResponse.ToString());
 
@@ -455,13 +499,13 @@ namespace tests
         /// ESTA PRUEBA DEBE FALLAR Y ENTREGAR MENSAJE DE QUE LAS FECHAS SON INCORRECTAS.
         /// </summary>
         [TestMethod]
-        public void TestListadoBoletasRangoError()
+        public void TestListadoBoletasRangoErrorMes()
         {
             TestEnv test_env = new TestEnv();
             test_env.SetVariablesDeEntorno();
             // Variables definidas para probar errores
             string fechaDesde = "2024-06-03";
-            string fechaHasta = "2024-06-02";
+            string fechaHasta = "2024-02-05";
 
             Boletas boletas = new Boletas();
 

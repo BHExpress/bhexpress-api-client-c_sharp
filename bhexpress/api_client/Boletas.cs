@@ -64,34 +64,21 @@ namespace bhexpress.api_client
             int perAnio = (!string.IsNullOrEmpty(periodo)) ? Convert.ToInt32(periodo.Substring(0, 4)) : 0;
             int perMes = (!string.IsNullOrEmpty(periodo) && periodo.Length > 4) ? Convert.ToInt32(periodo.Substring(4, 2)) : 0;
             // Fechas divididas y convertidas en enteros
-            int fechaDesdeAnio = (!string.IsNullOrEmpty(fechaDesde)) ? Convert.ToInt32(fechaDesde.Split('-')[0]) : 0;
-            int fechaDesdeMes = (!string.IsNullOrEmpty(fechaDesde)) ? Convert.ToInt32(fechaDesde.Split('-')[1]) : 0;
-            int fechaDesdeDia = (!string.IsNullOrEmpty(fechaDesde)) ? Convert.ToInt32(fechaDesde.Split('-')[2]) : 0;
-            int fechaHastaAnio = (!string.IsNullOrEmpty(fechaHasta)) ? Convert.ToInt32(fechaHasta.Split('-')[0]) : 0;
-            int fechaHastaMes = (!string.IsNullOrEmpty(fechaHasta)) ? Convert.ToInt32(fechaHasta.Split('-')[1]) : 0;
-            int fechaHastaDia = (!string.IsNullOrEmpty(fechaHasta)) ? Convert.ToInt32(fechaHasta.Split('-')[2]) : 0;
-            Trace.WriteLine(fechaDesdeAnio + "-" + fechaDesdeMes + "-" + fechaDesdeDia);
-            Trace.WriteLine(fechaHastaAnio + "-" + fechaHastaMes + "-" + fechaHastaDia);
             Trace.WriteLine(perAnio + "-" + perMes);
+            Trace.WriteLine(Convert.ToDateTime(fechaDesde).ToString());
+            Trace.WriteLine(Convert.ToDateTime(fechaHasta).ToString());
 
             if ((string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta)) || 
                 (!string.IsNullOrEmpty(fechaDesde) && string.IsNullOrEmpty(fechaHasta)))
             {
                 throw new ApiException("Debe ingresar fechaDesde junto con fechaHasta.");
             }
-            if ((fechaDesdeAnio > fechaHastaAnio && fechaDesdeAnio != 0 && fechaHastaAnio != 0) ||
-                ((fechaDesdeAnio <= fechaHastaAnio && fechaDesdeMes > fechaHastaMes) && fechaDesdeMes != 0 && fechaHastaMes != 0) ||
-                ((fechaDesdeAnio <= fechaHastaAnio && fechaDesdeMes <= fechaHastaMes && fechaDesdeDia > fechaHastaDia) && fechaDesdeDia != 0 && fechaHastaDia != 0))
+            if (!string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta))
             {
-                throw new ApiException("La fecha de fechaDesde no puede ser mayor que la de fechaHasta.");
-            }
-            if ((fechaDesdeAnio != perAnio && fechaDesdeAnio != 0 && perAnio != 0) || (fechaDesdeMes != perMes && fechaDesdeMes != 0 && perMes != 0))
-            {
-                throw new ApiException("Se generó un conflicto entre fechaDesde y periodo: Las fechas no coinciden.");
-            }
-            if ((fechaHastaAnio != perAnio && fechaHastaAnio != 0 && perAnio != 0) || (fechaHastaMes != perMes && fechaHastaMes != 0 && perMes != 0))
-            {
-                throw new ApiException("Se generó un conflicto entre fechaHasta y periodo: Las fechas no coinciden.");
+                if (Convert.ToDateTime(fechaDesde) > Convert.ToDateTime(fechaHasta))
+                {
+                    throw new ApiException("La fecha de fechaDesde no puede ser mayor que la de fechaHasta.");
+                }
             }
             
             // Construcción de URL
@@ -99,7 +86,7 @@ namespace bhexpress.api_client
             {
                 parameters.Add($"periodo={periodo}");
             }
-            if (!string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta))
+            else if (!string.IsNullOrEmpty(fechaDesde) && !string.IsNullOrEmpty(fechaHasta))
             {
                 parameters.Add($"fecha_desde={fechaDesde}&fecha_hasta={fechaHasta}");
             }
