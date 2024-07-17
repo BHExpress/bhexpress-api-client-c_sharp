@@ -45,8 +45,8 @@ Se recomienda ver los ejemplos para más detalles. Lo que se muestra aquí es s�
 una idea, y muy resumida:
 
 Lo más simple, y recomendado, es usar una variable de entorno con el
-`hash del usuario <https://libredte.cl/usuarios/perfil#datos:hashField>`_,
-la cual será reconocida automáticamente por el cliente:
+`token del usuario <https://bhexpress.cl/usuarios/perfil#token>`_,
+el cual será reconocida automáticamente por el cliente:
 
 .. code:: C#
 

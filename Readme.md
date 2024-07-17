@@ -39,7 +39,7 @@ Modo de uso
 Se recomienda ver los ejemplos para más detalles. Lo que se muestra aquí es sólo
 una idea, y muy resumida:
 
-Lo más simple, y recomendado, es usar una variable de entorno con el [hash del usuario](https://libredte.cl/usuarios/perfil#datos:hashField),
+Lo más simple, y recomendado, es usar una variable de entorno con el [token del usuario](https://bhexpress.cl/usuarios/perfil#token),
 el cual será reconocido automáticamente por el cliente:
 
 ```C#
