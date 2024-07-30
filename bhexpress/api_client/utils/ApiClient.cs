@@ -18,8 +18,8 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
@@ -35,6 +35,7 @@ namespace bhexpress.api_client.utils
         // Variables
         private string token;
         private string url;
+        private string rut;
         private Dictionary<string, string> headers { get; set; }
         private string version { get; set; }
         private bool raiseForStatus { get; set; }
@@ -45,6 +46,7 @@ namespace bhexpress.api_client.utils
         {
             this.token = this.ValidateToken(token);
             this.url = this.ValidateUrl(url);
+            this.rut = this.ValidateRut();
             this.headers = this.GenerateHeaders();
             this.version = version ?? DEFAULT_VERSION;
             this.raiseForStatus = raiseForStatus;
@@ -83,6 +85,21 @@ namespace bhexpress.api_client.utils
         }
 
         /// <summary>
+        /// RUT a validar.
+        /// </summary>
+        /// <returns>string RUT validada</returns>
+        /// <exception cref="ApiException">Si el RUT no es válido o está ausente.</exception>
+        private string ValidateRut()
+        {
+            rut = rut ?? Environment.GetEnvironmentVariable("BHEXPRESS_EMISOR_RUT");
+            if (string.IsNullOrEmpty(rut))
+            {
+                throw new ApiException("Se debe configurar la variable de entorno: BHEXPRESS_EMISOR_RUT.");
+            }
+            return rut.Trim();
+        }
+
+        /// <summary>
         /// Genera y retorna las cabeceras por omisión para las solicitudes.
         /// </summary>
         /// <returns type="Dictionary<string, string>">Dictionary Cabeceras por omisión.</returns>
@@ -92,7 +109,9 @@ namespace bhexpress.api_client.utils
             {
                 {"User-Agent", "BHExpress-Cliente-de-API-en-C#."},
                 {"Accept", "application/json"},
-                {"Authorization", $"Token {this.token}"}
+                {"ContentType", "application/json" },
+                {"Authorization", $"Token {this.token}"},
+                {"X-Bhexpress-Emisor", this.rut  }
             };
         }
 
@@ -104,7 +123,7 @@ namespace bhexpress.api_client.utils
         /// <returns type="HttpResponseMessage">Respuesta de la solicitud.</returns>
         public HttpResponseMessage Get(string resource, Dictionary<string, string> headers = null)
         {
-            return this.SendRequest(method: HttpMethod.Get, resource: resource, headers: headers);
+            return this.SendRequest(HttpMethod.Get, resource, headers: headers);
         }
 
         /// <summary>
@@ -115,7 +134,7 @@ namespace bhexpress.api_client.utils
         /// <returns type="HttpResponseMessage">Respuesta de la solicitud.</returns>
         public HttpResponseMessage Delete(string resource, Dictionary<string, string> headers = null)
         {
-            return this.SendRequest(method: HttpMethod.Delete, resource: resource, headers: headers);
+            return this.SendRequest(HttpMethod.Delete, resource, headers: headers);
         }
 
         /// <summary>
@@ -127,7 +146,7 @@ namespace bhexpress.api_client.utils
         /// <returns type="HttpResponseMessage">Respuesta de la solicitud.</returns>
         public HttpResponseMessage Post(string resource, Dictionary<string, object> data = null, Dictionary<string, string> headers = null)
         {
-            return this.SendRequest(method: HttpMethod.Post, resource: resource, data: data, headers: headers);
+            return this.SendRequest(HttpMethod.Post, resource, data: data, headers: headers);
         }
 
         /// <summary>
@@ -139,7 +158,7 @@ namespace bhexpress.api_client.utils
         /// <returns type="HttpResponseMessage">Respuesta de la solicitud.</returns>
         public HttpResponseMessage Put(string resource, Dictionary<string, object> data = null, Dictionary<string, string> headers = null)
         {
-            return this.SendRequest(method: HttpMethod.Put, resource: resource, data: data, headers: headers);
+            return this.SendRequest(HttpMethod.Put, resource, data: data, headers: headers);
         }
 
         /// <summary>
@@ -171,10 +190,8 @@ namespace bhexpress.api_client.utils
         private HttpResponseMessage SendRequest(HttpMethod method, string resource, Dictionary<string, object> data = null, Dictionary<string, string> headers = null)
         {
             string apiPath = $"/api{this.version}{resource}";
-            Trace.WriteLine(this.url + apiPath);
             Uri fullUrl = new Uri($"{this.url}{apiPath}");
             HttpRequestMessage request = new HttpRequestMessage(method, fullUrl);
-
             if (data != null)
             {
                 var jsonData = JsonConvert.SerializeObject(data);

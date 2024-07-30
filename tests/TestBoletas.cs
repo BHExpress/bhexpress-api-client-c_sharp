@@ -40,15 +40,14 @@ namespace tests
         {
             TestEnv test_env = new TestEnv();
             test_env.SetVariablesDeEntorno();
-            // Variables definidas para probar errores
 
+            // Creación de clase para su uso
             Boletas boletas = new Boletas();
 
             try
             {
                 HttpResponseMessage response = boletas.ListadoBhe();
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -92,7 +91,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(periodo: anio);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
                 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -136,7 +134,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(periodo: periodo);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -181,7 +178,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde, fechaHasta: fechaHasta);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -229,7 +225,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(periodo: periodo, fechaDesde: fechaDesde, fechaHasta: fechaHasta);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -273,7 +268,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(receptorCodigo: receptorCodigo);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -318,7 +312,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(periodo: periodo, receptorCodigo: receptorCodigo);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -364,7 +357,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde, fechaHasta: fechaHasta, receptorCodigo: receptorCodigo);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -411,7 +403,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde, fechaHasta: fechaHasta);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -462,7 +453,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde, fechaHasta: fechaHasta);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -513,7 +503,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.ListadoBhe(fechaDesde: fechaDesde, fechaHasta: fechaHasta);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -642,8 +631,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.EmitirBoleta(boleta);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
-
                 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -738,7 +725,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.EnviarEmailBoleta(numeroBhe, email);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)
@@ -782,7 +768,6 @@ namespace tests
             {
                 HttpResponseMessage response = boletas.AnularBoleta(numeroBhe, causa);
                 var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine(jsonResponse.ToString());
 
                 Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
                 foreach (var informacion in resultado)

@@ -59,21 +59,14 @@ Dictionary<string, object> resultado = JsonConvert.DeserializeObject<Dictionary<
 
 Lo que hizo el ejemplo anterior es listar boletas emitidas en un resultado.
 
-Ejemplos
+Pruebas
 --------
 
-Estos ejemplos provienen de la versión PHP. Para crear la versión C# de BHExpress,
-se tomó en cuenta dichos ejemplos.
-Los ejemplos cubren los siguientes casos:
+Las tres variables de entorno a continuación son un requisito tanto para las pruebas como para el software que 
+desees hacer usando el cliente de API.
 
-- `001-boletas_listado.php`: obtener las boletas de un período.
-- `002-boleta_emitir.php`: emisitir una BHE.
-- `003-boleta_pdf.php`: descargar el PDF de una BHE.
-- `004-boleta_email.php`: enviar por email una BHE.
-- `005-boleta_anular.php`: anular una BHE.
-
-Los ejemplos, por defecto, hacen uso de variables de entornos, si quieres usar
-esto debes tenerlas creadas, por ejemplo, en Windows 10, con:
+Si deseas usar el cliente de la API, debes tener las siguientes variables de entorno creadas. En Windows 10, 
+se hace con:
 
 ```shell
 set BHEXPRESS_API_URL="https://bhexpress.cl"
@@ -81,8 +74,32 @@ set BHEXPRESS_API_TOKEN="" # aquí el token obtenido en https://bhexpress.cl/usu
 set BHEXPRESS_EMISOR_RUT="" # aquí el RUT del emisor de las BHE
 ```
 
-Luego, para probar los ejemplos, lo que se necesita es Visual Studio 2019, y descargar este proyecto
-desde NuGet, o descargar desde GitHub y añadir un proyecto desde tu explorador de soluciones.
+Lo siguiente aplica para el proyecto "tests" que está disponible en el repositorio de GitHub:
+
+- Para probar la aplicación, deberás tener el paquete incluído en tu programa. 
+Haz click en "Ver" y selecciona "Explorador de pruebas".
+
+- Renombra la clase y el constructor en "TestEnv_dist.cs" como "TestEnv".
+
+- Define todas las variables dentro de "TestEnv_dist.cs".
+
+- Ejecuta las pruebas en el siguiente orden (asegúrate de tener las variables de entorno definidas en 
+"TestEnv_dist.cs"):
+
+    1. Todos o algunos de los test con el prefijo "TestListadoBoletas"
+    2. TestEmitirBoleta
+    3. TestPdfBoleta
+    4. TestEmailBoleta
+    5. TestAnularBoleta
+
+Consejos para las pruebas:
+
+- Ejecuta las pruebas una por una.
+- Define el número de la BHE por anular como la BHE que vayas a emitir. Así no quedas con una BHE 
+emitida esperando a ser cobrada.
+- Revisa en test/bin/debug/ el PDF que hayas emitido con las pruebas.
+- Revisa el email que hayas definido para "TestEmailBoleta". Allí va a llegar la BHE que hayas emitido 
+luego de ejecutar la prueba.
 
 Licencia
 --------

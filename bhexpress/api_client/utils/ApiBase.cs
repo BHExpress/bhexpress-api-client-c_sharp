@@ -35,7 +35,7 @@ namespace bhexpress.api_client.utils
         /// <param name="kwargs" type="Dictionary<string, string>">Argumentos adicionales para la autenticación.</param>
         public ApiBase(string apiToken = null, string apiUrl = null, string apiVersion = null, bool apiRaiseForStatus = true, Dictionary<string, string> kwargs = null)
         {
-            this.client = new ApiClient(apiToken, apiUrl, apiVersion, apiRaiseForStatus);
+            this.client = new ApiClient(token: apiToken, url: apiUrl, version: apiVersion, raiseForStatus: apiRaiseForStatus);
         }
     }
 }

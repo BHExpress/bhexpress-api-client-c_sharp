@@ -56,13 +56,7 @@ namespace bhexpress.api_client
         public HttpResponseMessage ListadoBhe(string periodo = null, string fechaDesde = null, string fechaHasta = null, string receptorCodigo = null)
         {
             string url = "/bhe/boletas";
-            string rut = Environment.GetEnvironmentVariable("BHEXPRESS_EMISOR_RUT");
             List<string> parameters = new List<string>();
-
-            // Revisión de variables
-            Trace.WriteLine(periodo ?? "0000-00");
-            Trace.WriteLine(Convert.ToDateTime(fechaDesde).ToString());
-            Trace.WriteLine(Convert.ToDateTime(fechaHasta).ToString());
 
             if (string.IsNullOrEmpty(fechaDesde) ^ string.IsNullOrEmpty(fechaHasta))
             {
@@ -92,12 +86,8 @@ namespace bhexpress.api_client
             {
                 url += "?" + string.Join("&", parameters);
             }
-            // Crear cabecera para el request
-            Dictionary<string, string> header = new Dictionary<string, string>(){
-                { "X-Bhexpress-Emisor", rut }
-            };
 
-            return this.client.Get(url, headers: header);
+            return this.client.Get(url);
         }
 
         /// <summary>
@@ -108,12 +98,7 @@ namespace bhexpress.api_client
         public HttpResponseMessage EmitirBoleta(Dictionary<string, object> boleta)
         {
             string url = "/bhe/emitir";
-            string rut = Environment.GetEnvironmentVariable("BHEXPRESS_EMISOR_RUT");
-            Dictionary<string, string> header = new Dictionary<string, string>(){
-                { "X-Bhexpress-Emisor", rut }
-            };
-
-            return this.client.Post(resource: url, data: boleta, headers: header);
+            return this.client.Post(url, data: boleta);
         }
 
         /// <summary>
@@ -124,12 +109,8 @@ namespace bhexpress.api_client
         public HttpResponseMessage ObtenerPdfBoleta(string numeroBhe)
         {
             string url = $"/bhe/pdf/{numeroBhe}";
-            string rut = Environment.GetEnvironmentVariable("BHEXPRESS_EMISOR_RUT");
-            Dictionary<string, string> header = new Dictionary<string, string>(){
-                { "X-Bhexpress-Emisor", rut }
-            };
 
-            return this.client.Get(url, headers: header);
+            return this.client.Get(url);
         }
 
         /// <summary>
@@ -141,7 +122,6 @@ namespace bhexpress.api_client
         public HttpResponseMessage EnviarEmailBoleta(string numeroBhe, string email)
         {
             string url = $"/bhe/email/{numeroBhe}";
-            string rut = Environment.GetEnvironmentVariable("BHEXPRESS_EMISOR_RUT");
             Dictionary<string, string> correo = new Dictionary<string, string>()
             {
                 {"email", email }
@@ -151,11 +131,7 @@ namespace bhexpress.api_client
                 { "destinatario", correo }
             };
 
-            Dictionary<string, string> header = new Dictionary<string, string>(){
-                { "X-Bhexpress-Emisor", rut }
-            };
-
-            return this.client.Post(resource: url, data: body, headers: header);
+            return this.client.Post(resource: url, data: body);
         }
 
         /// <summary>
@@ -167,18 +143,13 @@ namespace bhexpress.api_client
         public HttpResponseMessage AnularBoleta(string numeroBhe, int causa)
         {
             string url = $"/bhe/anular/{numeroBhe}";
-            string rut = Environment.GetEnvironmentVariable("BHEXPRESS_EMISOR_RUT");
 
             Dictionary<string, object> body = new Dictionary<string, object>()
             {
                 { "causa", causa }
             };
 
-            Dictionary<string, string> header = new Dictionary<string, string>(){
-                { "X-Bhexpress-Emisor", rut }
-            };
-
-            return this.client.Post(resource: url, data: body, headers: header);
+            return this.client.Post(resource: url, data: body);
         }
     }
 }
